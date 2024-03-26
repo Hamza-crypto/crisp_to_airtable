@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    dump('Test');
     return view('welcome');
 });
 
@@ -28,8 +27,4 @@ Route::controller(WebhookController::class)->group(function () {
 Route::get('migrate', function () {
     Artisan::call('migrate:fresh --seed');
     dump('Migration Done');
-});
-
-Route::get('schedule', function () {
-    Artisan::call('quickbooks:refresh-access-token');
 });
