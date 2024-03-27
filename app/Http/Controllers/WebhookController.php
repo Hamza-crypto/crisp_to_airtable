@@ -26,32 +26,57 @@ class WebhookController extends Controller
     {
         $data = $request->all();
 
+        // Check if both email and phone are missing
+        if (empty($data['email']) && empty($data['phone'])) {
+            return 0; // Return 0 and exit further execution
+        }
+
         // Splitting the name into first and last name
         $fullName = explode(' ', $data['nickname']);
         $firstName = $fullName[0];
         $lastName = isset($fullName[1]) ? $fullName[1] : '';
 
         // Extracting course interests
-        $courseInterests = implode(', ', $data['fields']['Course interest']);
+        $courseInterests = $data['course_interest'] ?? ''; // Set to empty string if course interest is undefined or null
+        if (is_array($courseInterests)) {
+            $courseInterests = implode(', ', $courseInterests);
+        }
 
         $body = [
             'fields' => [
                 'First name' => $firstName,
                 'Last name' => $lastName,
-                'Email' => $data['email'] ?? '',
-                'Phone' => $data['phone'] ?? '',
-                'GCLID' => $data['GCLID'] ?? '',
-                'crisp_profile' => $data['crisp_profile'] ?? '',
-                'whatsapp' => $data['whatsapp_business_number'] ?? '',
-                'Course interest' => $courseInterests,
-                'utm_source' => $data['utm_source'] ?? '',
                 'Status' => 'NEW',
             ]
         ];
 
+        // Conditionally add fields based on whether their values are defined and not equal to "undefined" or an empty string
+        if (!empty($data['email']) && $data['email'] !== "undefined") {
+            $body['fields']['Email'] = $data['email'];
+        }
+        if (!empty($data['phone']) && $data['phone'] !== "undefined") {
+            $body['fields']['Phone'] = $data['phone'];
+        }
+        if (isset($data['GCLID']) && $data['GCLID'] !== "undefined") {
+            $body['fields']['GCLID'] = $data['GCLID'];
+        }
+        if (isset($data['crisp_profile']) && $data['crisp_profile'] !== "undefined") {
+            $body['fields']['crisp_profile'] = $data['crisp_profile'];
+        }
+        if (isset($data['whatsapp_business_number']) && $data['whatsapp_business_number'] !== "undefined") {
+            $body['fields']['whatsapp'] = $data['whatsapp_business_number'];
+        }
+        if (!empty($courseInterests) && $courseInterests !== "undefined") {
+            $body['fields']['Course interest'] = $courseInterests;
+        }
+        if (isset($data['utm_source']) && $data['utm_source'] !== "undefined") {
+            $body['fields']['utm_source'] = $data['utm_source'];
+        }
+
         $url = sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
 
         $response = $this->at_controller->call($url, 'POST', $body);
+        return "Passed";
         dump($response);
     }
 }
