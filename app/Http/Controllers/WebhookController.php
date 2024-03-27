@@ -76,7 +76,14 @@ class WebhookController extends Controller
         $url = sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
 
         $response = $this->at_controller->call($url, 'POST', $body);
-        return "Passed";
-        dump($response);
+
+        return $response;
+        // Check if response status is 200 and it contains the "id" field
+        if ($response['status'] === 200 && isset($response['id'])) {
+            return "Record successfully created in AirTable";
+        } else {
+            return $response; // Return appropriate message if creation failed
+        }
+
     }
 }
