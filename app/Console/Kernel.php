@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('airtable:refresh-webhook')->weekly();
+        $schedule->command('airtable:fetch-webhooks')->everyMinute();
     }
 
     /**
