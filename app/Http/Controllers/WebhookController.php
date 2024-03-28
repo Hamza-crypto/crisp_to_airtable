@@ -76,7 +76,7 @@ class WebhookController extends Controller
             $body['fields']['whatsapp'] = $data['whatsapp_business_number'];
         }
         if (!empty($courseInterests) && $courseInterests !== "undefined") {
-            $body['fields']['Course interest'] = $courseInterests;
+            $body['fields']['Course interest'] = [$courseInterests];
         }
         if (isset($data['utm_source']) && $data['utm_source'] !== "undefined") {
             $body['fields']['utm_source'] = $data['utm_source'];
