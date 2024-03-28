@@ -15,11 +15,13 @@ use Revolution\Google\Sheets\Facades\Sheets;
 
 class WebhookController extends Controller
 {
-    public $at_controller;
+/    public $air_table_controller;
+    public $crisp_controller;
 
     public function __construct()
     {
-        $this->at_controller = new AirTableController();
+        $this->air_table_controller = new AirTableController();
+        $this->crisp_controller = new CrispController();
     }
 
     public function webhook(Request $request)
@@ -75,7 +77,7 @@ class WebhookController extends Controller
 
         $url = sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
 
-        $response = $this->at_controller->call($url, 'POST', $body);
+        $response = $this->air_table_controller->call($url, 'POST', $body);
 
         // Check if response status is 200 and it contains the "id" field
         if (isset($response['id'])) {
@@ -83,6 +85,35 @@ class WebhookController extends Controller
         } else {
             return $response; // Return appropriate message if creation failed
         }
+
+    }
+
+    public function getMessages($session_id, $body)
+    {
+        try{
+            $crisp_url = sprintf("conversation/%s/messages", $session_id);
+            $responseData = $this->crisp_controller->call($crisp_url);
+
+            if (!isset($responseData['data']) || empty($responseData['data'])) {
+                return response()->json(['error' => true, 'message' => 'No messages found in the response.']);
+            }
+
+            $messages = $responseData['data'];
+
+            // Concatenate all messages into a single string
+            $conversation = '';
+            foreach ($messages as $message) {
+                $personName = $message['from'] === 'user' ? 'Visitor' : 'Operator'; // Determine person's name
+                $conversation .= "{$personName}: {$message['content']}\n"; // Add person's name with message content and a newline separator
+            }
+
+            $body['fields']['crisp_conversations'] = $conversation;
+            return $body;
+        }
+        catch(\Exception $e){
+            return $body;
+        }
+
 
     }
 }

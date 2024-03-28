@@ -7,6 +7,7 @@
 /storage/*.json
 /vendor
 .env
+/storage/creds.json
 .env.backup
 .env.production
 .phpunit.result.cache
