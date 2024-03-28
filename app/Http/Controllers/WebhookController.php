@@ -63,7 +63,14 @@ class WebhookController extends Controller
             $body['fields']['GCLID'] = $data['GCLID'];
         }
         if (isset($data['crisp_profile']) && $data['crisp_profile'] !== "undefined") {
-            $body['fields']['crisp_profile'] = $data['crisp_profile'];
+            // Extract the URL from the "crisp_profile" field using regex
+            preg_match('/\[Open Profile\]\((.*?)\)/', $data['crisp_profile'], $matches);
+
+            // Check if the regex found a match
+            if (!empty($matches[1])) {
+                // Extracted URL found, assign it to the 'crisp_profile' field
+                $body['fields']['crisp_profile'] = $matches[1];
+            }
         }
         if (isset($data['whatsapp_business_number']) && $data['whatsapp_business_number'] !== "undefined") {
             $body['fields']['whatsapp'] = $data['whatsapp_business_number'];
