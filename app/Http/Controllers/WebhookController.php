@@ -15,7 +15,7 @@ use Revolution\Google\Sheets\Facades\Sheets;
 
 class WebhookController extends Controller
 {
-/    public $air_table_controller;
+    public $air_table_controller;
     public $crisp_controller;
 
     public function __construct()
