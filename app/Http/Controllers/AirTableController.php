@@ -31,9 +31,11 @@ class AirTableController extends Controller
     public function store()
     {
         $cursor = Cursor::where('id', 1)->first();
-        $url = sprintf("bases/%s/webhooks/%s/payloads?cursor=%s", env('BASE_ID'), env('WEBHOOK_ID'), $cursor->count);
+        $url = sprintf("%s/bases/%s/webhooks/%s/payloads?cursor=%s", env('AIRTABLE_BASE_URL'), env('BASE_ID'), env('WEBHOOK_ID'), $cursor->count);
 
-        $data = $this->call($url);
+        $response = Http::withToken(env('AIRTABLE_TOKEN'))->get($url);
+
+        $data = $response->json();
 
         $allowedFields = [
             'fldyZIIKL2rGWc6J1', //first name
