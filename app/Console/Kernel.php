@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('airtable:refresh-webhook')->weekly();
         $schedule->command('airtable:fetch-webhooks')->everyMinute();
+        $schedule->command('crisp:update')->everyMinute();
     }
 
     /**

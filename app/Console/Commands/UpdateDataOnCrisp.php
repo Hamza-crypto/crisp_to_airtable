@@ -19,25 +19,25 @@ class UpdateDataOnCrisp extends Command
         $air_table_controller = new AirTableController;
         $crisp_controller = new CrispController();
 
-        $webhook = AirTable::first();
+        $webhook = AirTable::firstOrFail();
 
         try{
             $url = sprintf("%s", $webhook->record);
-                $data = $air_table_controller->call($url);
+            $data = $air_table_controller->call($url);
 
-                $data = $data['fields'];
+            $data = $data['fields'];
 
-                if (!isset($data['Email'])) {
-                    return 0;
-                }
+            if (!isset($data['Email'])) {
+                return 0;
+            }
 
 
 
-                $this->createNewContact($crisp_controller, $data);
-                $this->updateContactInfo($crisp_controller, $data);
-                $this->updateProfileInfo($crisp_controller, $data);
+            $this->createNewContact($crisp_controller, $data);
+            $this->updateContactInfo($crisp_controller, $data);
+            $this->updateProfileInfo($crisp_controller, $data);
 
-                AirTable::where('record', $webhook->record)->delete();
+            AirTable::where('record', $webhook->record)->delete();
         }
         catch(Exception $e){
             AirTable::where('record', $webhook->record)->delete();
