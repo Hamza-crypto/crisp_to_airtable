@@ -27,6 +27,8 @@ class CrispController extends Controller
             $response = Http::withHeaders($headers)->get($url);
         } elseif ($method === 'POST') {
             $response = Http::withHeaders($headers)->post($url, $body);
+        } elseif ($method === 'PATCH') {
+            $response = Http::withHeaders($headers)->patch($url, $body);
         }
 
         return $response->json();

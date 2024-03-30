@@ -11,8 +11,10 @@ class AirTableController extends Controller
 {
     public function call($endpoint, $method = 'GET', $body = [])
     {
-        $url = sprintf("%s/%s",
+        $url = sprintf("%s/%s/%s/%s",
             env('AIRTABLE_BASE_URL'),
+            env('BASE_ID'),
+            env('TABLE_NAME'),
             $endpoint);
 
         $response = Http::withToken(env('AIRTABLE_TOKEN'));
@@ -63,9 +65,9 @@ class AirTableController extends Controller
                     foreach ($cellValues as $fieldId => $value) {
 
                         // Check if the field is allowed
-                        if ( !in_array($fieldId, $allowedFields)) {
-                            continue;
-                        }
+                        // if ( !in_array($fieldId, $allowedFields)) {
+                        //     continue;
+                        // }
 
                         // Initialize an empty array to hold the values
                         $values = [];
