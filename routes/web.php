@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('migrate', function () {
+    Artisan::call('crisp:update');
+});
+
+Route::get('crisp-update', function () {
+
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,9 +35,4 @@ Route::controller(WebhookController::class)->group(function () {
 Route::get('migrate', function () {
     //Artisan::call('migrate:fresh --seed');
     dump('Migration Done');
-});
-
-
-Route::get('crisp-update', function () {
-    Artisan::call('crisp:update');
 });
