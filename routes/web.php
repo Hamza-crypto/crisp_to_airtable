@@ -19,6 +19,9 @@ Route::get('updates', function () {
     Artisan::call('crisp:update');
 });
 
+Route::get('/phpinfo', function () {
+    dd(phpinfo());
+});
 
 Route::get('/', function () {
     return view('welcome');
