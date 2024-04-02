@@ -20,7 +20,7 @@ Route::get('updates', function () {
 });
 
 Route::get('/phpinfo', function () {
-    dd(phpinfo());
+    echo phpinfo();
 });
 
 Route::get('/', function () {
