@@ -92,6 +92,15 @@ class UpdateDataOnCrisp extends Command
             $body['person']['gender'] = strtolower($data['Gender']);
         }
 
+        $body['segments'][] = "airtable";
+
+        //Uncomment this for inserting status value into Segments
+
+        // if(isset($data['Status'])){
+        //     $body['segments'][] = $data['Status'];
+        // }
+
+
         $url = sprintf("people/profile/%s", $email);
         $response = $crisp_controller->call($url, 'PATCH', $body);
         dump($response);
