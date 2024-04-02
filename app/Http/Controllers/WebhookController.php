@@ -82,7 +82,7 @@ class WebhookController extends Controller
             $body['fields']['utm_source'] = $data['utm_source'];
         }
 
-        $url = sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
+        $url = ""; //sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
 
         $response = $this->air_table_controller->call($url, 'POST', $body);
 
