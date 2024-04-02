@@ -21,6 +21,7 @@ Route::get('updates', function () {
 
 Route::get('/phpinfo', function () {
     dd(phpinfo());
+    //
 });
 
 Route::get('/', function () {
