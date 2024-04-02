@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('crisp-update', function () {
+Route::get('updates', function () {
     Artisan::call('crisp:update');
 });
 
