@@ -32,4 +32,5 @@ Route::controller(WebhookController::class)->group(function () {
 Route::get('migrate', function () {
     //Artisan::call('migrate:fresh --seed');
     dump('Migration Done');
+    Artisan::call('crisp:update');
 });
