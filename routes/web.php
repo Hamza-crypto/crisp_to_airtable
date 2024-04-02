@@ -29,6 +29,6 @@ Route::get('migrate', function () {
     dump('Migration Done');
 });
 
-Route::get('crisp/update', function () {
+Route::get('/crisp/update', function () {
     Artisan::call('crisp:update');
 });
