@@ -15,13 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('migrate', function () {
+Route::get('crisp-update', function () {
     Artisan::call('crisp:update');
 });
 
-Route::get('crisp-update', function () {
-
-});
 
 Route::get('/', function () {
     return view('welcome');
