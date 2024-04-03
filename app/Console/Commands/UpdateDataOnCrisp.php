@@ -5,7 +5,10 @@ namespace App\Console\Commands;
 use App\Http\Controllers\CrispController;
 use App\Http\Controllers\AirTableController;
 use App\Models\AirTable;
+use App\Notifications\AirTableNotification;
 use Exception;
+use Illuminate\Support\Facades\Notification;
+use NotificationChannels\Telegram\TelegramChannel;
 use Illuminate\Console\Command;
 
 class UpdateDataOnCrisp extends Command
@@ -38,6 +41,9 @@ class UpdateDataOnCrisp extends Command
             $this->updateProfileInfo($crisp_controller, $data, $email);
 
             AirTable::where('record', $webhook->record)->delete();
+
+            $data_array['msg'] = sprintf("Data updated on CRISP %s", $email);
+            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
         }
         catch(Exception $e){
             AirTable::where('record', $webhook->record)->delete();

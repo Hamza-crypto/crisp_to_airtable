@@ -2,8 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Models\AirTable;
+use App\Notifications\AirTableNotification;
+use App\Notifications\ExceptionOccurredNotification;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+
+use Illuminate\Support\Facades\Notification;
+use NotificationChannels\Telegram\TelegramChannel;
+
+
 
 class Handler extends ExceptionHandler
 {
@@ -26,5 +34,19 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function report(Throwable $exception)
+    {
+        if ($this->shouldReport($exception)) {
+            $this->sendTelegramNotification($exception);
+        }
+
+        parent::report($exception);
+    }
+
+    private function sendTelegramNotification(Throwable $exception)
+    {
+        Notification::route(TelegramChannel::class, '')->notify(new ExceptionOccurredNotification($exception));
     }
 }

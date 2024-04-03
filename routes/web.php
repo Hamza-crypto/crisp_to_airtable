@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\WebhookController;
+use App\Notifications\AirTableNotification;
+use Brick\Math\Exception\DivisionByZeroException;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use NotificationChannels\Telegram\TelegramChannel;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +24,13 @@ Route::get('updates', function () {
     Artisan::call('crisp:update');
 });
 
-Route::get('/phpinfo', function () {
-    echo phpinfo();
+Route::get('/telegram', function () {
+    $data_array['to'] = 'crisp_airtable';
+    $data_array['msg'] = sprintf("Leadvertex order no. %s status updated to %s", 2, 6);
+
+    dump($data_array['aa']);
+    Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+
 });
 
 Route::get('/', function () {

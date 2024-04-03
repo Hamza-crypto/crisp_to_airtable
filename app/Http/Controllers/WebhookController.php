@@ -83,7 +83,7 @@ class WebhookController extends Controller
         // Check if response status is 200 and it contains the "id" field
         if (isset($response['id'])) {
 
-            $data_array['msg'] = sprintf("Webhook sent for user: %s", $response['fields']['Email']);
+            $data_array['msg'] = sprintf("Webhook successfuly sent for user: %s", $response['fields']['Email']);
             Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
 
             return "Record successfully created in AirTable";
