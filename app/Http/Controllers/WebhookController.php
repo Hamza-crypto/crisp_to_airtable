@@ -54,7 +54,7 @@ class WebhookController extends Controller
 
         // Conditionally add fields based on whether their values are defined and not equal to "undefined" or an empty string
         if (!empty($data['email']) && $data['email'] !== "undefined") {
-            $body['fields']['Email'] = $data['email'];
+            $body['fields']['Email'] = trim($data['email']);
         }
         if (!empty($data['phone']) && $data['phone'] !== "undefined") {
             $body['fields']['Phone'] = $data['phone'];

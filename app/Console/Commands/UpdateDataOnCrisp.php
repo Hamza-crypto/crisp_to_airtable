@@ -31,11 +31,11 @@ class UpdateDataOnCrisp extends Command
                 return 0;
             }
 
+            $email = trim($data['Email']);
 
-
-            $this->createNewContact($crisp_controller, $data);
-            $this->updateContactInfo($crisp_controller, $data);
-            $this->updateProfileInfo($crisp_controller, $data);
+            $this->createNewContact($crisp_controller, $data, $email);
+            $this->updateContactInfo($crisp_controller, $data, $email);
+            $this->updateProfileInfo($crisp_controller, $data, $email);
 
             AirTable::where('record', $webhook->record)->delete();
         }
@@ -46,9 +46,8 @@ class UpdateDataOnCrisp extends Command
 
     }
 
-    public function createNewContact($crisp_controller, $data)
+    public function createNewContact($crisp_controller, $data, $email)
     {
-        $email = $data['Email'];
         $url = sprintf("people/profile/%s", $email);
         $response = $crisp_controller->call($url);
 
@@ -76,10 +75,8 @@ class UpdateDataOnCrisp extends Command
 
     }
 
-    public function updateContactInfo($crisp_controller, $data)
+    public function updateContactInfo($crisp_controller, $data, $email)
     {
-        $email = $data['Email'];
-
         if (isset($data['Full Name'])) {
             $body['person']['nickname'] = $data['Full Name'];
         }
@@ -106,10 +103,8 @@ class UpdateDataOnCrisp extends Command
         dump($response);
     }
 
-    public function updateProfileInfo($crisp_controller, $data)
+    public function updateProfileInfo($crisp_controller, $data, $email)
     {
-        $email = $data['Email'];
-
         if (isset($data['whatsapp'])) {
             $body['data']['whatsapp_business_number'] = $data['whatsapp'];
         }
