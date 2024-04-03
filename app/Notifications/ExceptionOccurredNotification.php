@@ -26,7 +26,7 @@ class ExceptionOccurredNotification extends Notification
     public function toTelegram($notifiable)
     {
         $telegram_id = env('TELEGRAM_CRISP_AIRTABLE');
-        $msg = sprintf("%s \n%s Line:%d", $this->exception->getMessage(), $this->exception->getFile(), $this->exception->getLine());
+        $msg = sprintf("%s \nLine:%s", $this->exception->getMessage(), $this->exception->getLine());
 
         return TelegramMessage::create()
             ->to($telegram_id)
