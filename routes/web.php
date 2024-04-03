@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\WebhookController;
+use App\Models\AirTable;
 use App\Notifications\AirTableNotification;
 use Brick\Math\Exception\DivisionByZeroException;
 use Illuminate\Support\Facades\Notification;
@@ -22,6 +23,11 @@ use NotificationChannels\Telegram\TelegramChannel;
 
 Route::get('updates', function () {
     Artisan::call('crisp:update');
+});
+
+Route::get('db', function () {
+    $record = AirTable::first();
+    dump($record);
 });
 
 Route::get('/telegram', function () {
