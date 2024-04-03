@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\GoogleSheetsService;
-use Exception;
-use Google\Service\Storage;
+use App\Notifications\AirTableNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use QuickBooksOnline\API\DataService\DataService;
-use QuickBooksOnline\API\Facades\Invoice;
-use Illuminate\Support\Facades\File;
-use QuickBooksOnline\API\Core\Http\Serialization\XmlObjectSerializer;
-use Revolution\Google\Sheets\Facades\Sheets;
+use Illuminate\Support\Facades\Notification;
+use NotificationChannels\Telegram\TelegramChannel;
 
 class WebhookController extends Controller
 {
@@ -88,6 +82,10 @@ class WebhookController extends Controller
 
         // Check if response status is 200 and it contains the "id" field
         if (isset($response['id'])) {
+
+            $data_array['msg'] = sprintf("Webhook sent for user: %s", $response['fields']['Email']);
+            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+
             return "Record successfully created in AirTable";
         } else {
             return $response; // Return appropriate message if creation failed
