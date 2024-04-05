@@ -2,16 +2,11 @@
 
 namespace App\Exceptions;
 
-use App\Models\AirTable;
-use App\Notifications\AirTableNotification;
 use App\Notifications\ExceptionOccurredNotification;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
-
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
-
-
+use Throwable;
 
 class Handler extends ExceptionHandler
 {

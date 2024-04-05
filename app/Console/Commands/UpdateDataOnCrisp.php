@@ -2,14 +2,14 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\CrispController;
 use App\Http\Controllers\AirTableController;
+use App\Http\Controllers\CrispController;
 use App\Models\AirTable;
 use App\Notifications\AirTableNotification;
 use Exception;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
-use Illuminate\Console\Command;
 
 class UpdateDataOnCrisp extends Command
 {
@@ -23,49 +23,46 @@ class UpdateDataOnCrisp extends Command
         $crisp_controller = new CrispController();
 
         $webhooks = \DB::table('air_tables')
-                ->selectRaw('DISTINCT record')
-                ->take(10)
-                ->get();
+            ->selectRaw('DISTINCT record')
+            ->take(10)
+            ->get();
 
-                foreach($webhooks as $webhook){
-                   try{
-                        $url = sprintf("%s", $webhook->record);
-                        $data = $air_table_controller->call($url);
+        foreach ($webhooks as $webhook) {
+            try {
+                $url = sprintf('%s', $webhook->record);
+                $data = $air_table_controller->call($url);
 
-                        $data = $data['fields'];
+                $data = $data['fields'];
 
-                        if (!isset($data['Email'])) {
-                            return 0;
-                        }
-
-                        $email = trim($data['Email']);
-
-                        $this->createNewContact($crisp_controller, $data, $email);
-                        $this->updateContactInfo($crisp_controller, $data, $email);
-                        $this->updateProfileInfo($crisp_controller, $data, $email);
-
-                        AirTable::where('record', $webhook->record)->delete();
-
-                        $data_array['msg'] = sprintf("Data updated on CRISP %s", $email);
-                        Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
-                    }
-                    catch(Exception $e){
-                        AirTable::where('record', $webhook->record)->delete();
-                        dump($e->getMessage());
-                    }
+                if (! isset($data['Email'])) {
+                    return 0;
                 }
 
+                $email = trim($data['Email']);
 
+                $this->createNewContact($crisp_controller, $data, $email);
+                $this->updateContactInfo($crisp_controller, $data, $email);
+                $this->updateProfileInfo($crisp_controller, $data, $email);
+
+                AirTable::where('record', $webhook->record)->delete();
+
+                $data_array['msg'] = sprintf('Data updated on CRISP %s', $email);
+                Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+            } catch (Exception $e) {
+                AirTable::where('record', $webhook->record)->delete();
+                dump($e->getMessage());
+            }
+        }
 
     }
 
     public function createNewContact($crisp_controller, $data, $email)
     {
-        $url = sprintf("people/profile/%s", $email);
+        $url = sprintf('people/profile/%s', $email);
         $response = $crisp_controller->call($url);
 
         //Create new contact if not found on Crisp
-        if( $response['error']) {
+        if ($response['error']) {
 
             $body['email'] = $email;
 
@@ -81,9 +78,9 @@ class UpdateDataOnCrisp extends Command
                 $body['person']['gender'] = strtolower($data['Gender']);
             }
 
-        $url = sprintf("people/profile");
-        $response = $crisp_controller->call($url, 'POST', $body);
-        dump($response);
+            $url = sprintf('people/profile');
+            $response = $crisp_controller->call($url, 'POST', $body);
+            dump($response);
         }
 
     }
@@ -102,7 +99,7 @@ class UpdateDataOnCrisp extends Command
             $body['person']['gender'] = strtolower($data['Gender']);
         }
 
-        $body['segments'][] = "airtable";
+        $body['segments'][] = 'airtable';
 
         //Uncomment this for inserting status value into Segments
 
@@ -110,8 +107,7 @@ class UpdateDataOnCrisp extends Command
         //     $body['segments'][] = $data['Status'];
         // }
 
-
-        $url = sprintf("people/profile/%s", $email);
+        $url = sprintf('people/profile/%s', $email);
         $response = $crisp_controller->call($url, 'PATCH', $body);
         dump($response);
     }
@@ -125,21 +121,18 @@ class UpdateDataOnCrisp extends Command
         if (isset($data['Course interest'])) {
             if (is_array($data['Course interest'])) {
                 $body['data']['course_interest'] = implode(', ', $data['Course interest']);
-            }
-            else {
+            } else {
                 $body['data']['course_interest'] = $data['Course interest'];
             }
-        }
-        else {
-            $body['data']['course_interest'] = "";
+        } else {
+            $body['data']['course_interest'] = '';
         }
 
         $body['data']['nationality'] = isset($data['Nationality']) ? $data['Nationality'] : '';
         $body['data']['registered'] = isset($data['Registered']) ? $data['Registered'] : '';
         $body['data']['preferred_timing'] = isset($data['Preferred timing']) ? $data['Preferred timing'] : '';
         $body['data']['total_spend'] = isset($data['Amount Rollup (from Deal)']) ? $data['Amount Rollup (from Deal)'] : '';
-        $body['data']['branch'] = "Dubai"; // isset($data['Branch']) ? $data['Branch'] : '';
-
+        $body['data']['branch'] = 'Dubai'; // isset($data['Branch']) ? $data['Branch'] : '';
 
         $body['data']['utm_campaign'] = isset($data['utm_campaign']) ? $data['utm_campaign'] : '';
         $body['data']['utm_source'] = isset($data['utm_source']) ? $data['utm_source'] : '';
@@ -149,7 +142,7 @@ class UpdateDataOnCrisp extends Command
 
         $body['data']['status'] = isset($data['Status']) ? $data['Status'] : '';
 
-        $url = sprintf("people/data/%s", $email);
+        $url = sprintf('people/data/%s', $email);
         $response = $crisp_controller->call($url, 'PATCH', $body);
 
         dump($response);
