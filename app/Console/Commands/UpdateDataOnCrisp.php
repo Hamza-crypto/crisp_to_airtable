@@ -22,33 +22,40 @@ class UpdateDataOnCrisp extends Command
         $air_table_controller = new AirTableController;
         $crisp_controller = new CrispController();
 
-        $webhook = AirTable::firstOrFail();
+        $webhooks = \DB::table('air_tables')
+                ->selectRaw('DISTINCT record')
+                ->take(5)
+                ->get();
 
-        try{
-            $url = sprintf("%s", $webhook->record);
-            $data = $air_table_controller->call($url);
+                foreach($webhooks as $webhook){
+                   try{
+                        $url = sprintf("%s", $webhook->record);
+                        $data = $air_table_controller->call($url);
 
-            $data = $data['fields'];
+                        $data = $data['fields'];
 
-            if (!isset($data['Email'])) {
-                return 0;
-            }
+                        if (!isset($data['Email'])) {
+                            return 0;
+                        }
 
-            $email = trim($data['Email']);
+                        $email = trim($data['Email']);
 
-            $this->createNewContact($crisp_controller, $data, $email);
-            $this->updateContactInfo($crisp_controller, $data, $email);
-            $this->updateProfileInfo($crisp_controller, $data, $email);
+                        $this->createNewContact($crisp_controller, $data, $email);
+                        $this->updateContactInfo($crisp_controller, $data, $email);
+                        $this->updateProfileInfo($crisp_controller, $data, $email);
 
-            AirTable::where('record', $webhook->record)->delete();
+                        AirTable::where('record', $webhook->record)->delete();
 
-            $data_array['msg'] = sprintf("Data updated on CRISP %s", $email);
-            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
-        }
-        catch(Exception $e){
-            AirTable::where('record', $webhook->record)->delete();
-            dump($e->getMessage());
-        }
+                        $data_array['msg'] = sprintf("Data updated on CRISP %s", $email);
+                        Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+                    }
+                    catch(Exception $e){
+                        AirTable::where('record', $webhook->record)->delete();
+                        dump($e->getMessage());
+                    }
+                }
+
+
 
     }
 

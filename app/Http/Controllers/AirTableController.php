@@ -6,6 +6,9 @@ use App\Models\AirTable;
 use App\Models\Cursor;
 use Exception;
 use Illuminate\Support\Facades\Http;
+use App\Notifications\AirTableNotification;
+use Illuminate\Support\Facades\Notification;
+use NotificationChannels\Telegram\TelegramChannel;
 
 class AirTableController extends Controller
 {
@@ -118,6 +121,16 @@ class AirTableController extends Controller
 
         }
         Cursor::where('id', 1)->update(['count' => $data['cursor']]);
+
+        // if($sourceValues){
+        //     $uniqueSourceValues = array_unique($sourceValues);
+        //     $sourceString = implode(', ', $uniqueSourceValues);
+        //     $data_array['msg'] = sprintf("Webhook cursor: %s \n %s", $cursor->count, $sourceString);
+        //     Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+        // }
+
+
         return response()->json(['message' => 'Data stored/updated successfully'], 200);
+
     }
 }
