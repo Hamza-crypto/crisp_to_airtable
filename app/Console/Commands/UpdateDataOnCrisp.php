@@ -24,7 +24,7 @@ class UpdateDataOnCrisp extends Command
 
         $webhooks = \DB::table('air_tables')
                 ->selectRaw('DISTINCT record')
-                ->take(5)
+                ->take(10)
                 ->get();
 
                 foreach($webhooks as $webhook){
