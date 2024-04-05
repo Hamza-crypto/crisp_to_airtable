@@ -11,6 +11,7 @@ use NotificationChannels\Telegram\TelegramMessage;
 class AirTableNotification extends Notification
 {
     use Queueable;
+
     public $msg = [];
 
     public function __construct($msg = [])
@@ -49,5 +50,4 @@ class AirTableNotification extends Notification
             //
         ];
     }
-
 }

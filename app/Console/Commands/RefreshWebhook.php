@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 
 class RefreshWebhook extends Command
 {
-
     protected $signature = 'airtable:refresh-webhook';
 
     protected $description = 'Command description';
@@ -16,7 +15,7 @@ class RefreshWebhook extends Command
     {
         $air_table_controller = new AirTableController;
 
-        $url = sprintf("bases/%s/webhooks/%s/refresh", env('BASE_ID'), env('WEBHOOK_ID'));
+        $url = sprintf('bases/%s/webhooks/%s/refresh', env('BASE_ID'), env('WEBHOOK_ID'));
         $response = $air_table_controller->call($url, 'POST');
 
         dump($response);

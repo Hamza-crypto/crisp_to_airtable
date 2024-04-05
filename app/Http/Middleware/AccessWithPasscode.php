@@ -8,9 +8,9 @@ class AccessWithPasscode
 {
     public function handle($request, Closure $next)
     {
-         if ($request->is('telescope*') && $request->isMethod('GET')) {
+        if ($request->is('telescope*') && $request->isMethod('GET')) {
 
-            if (!$request->user()) {
+            if (! $request->user()) {
 
                 $passcode = $request->input('passcode');
                 if ($passcode !== env('TELESCOPE_PASSCODE')) {

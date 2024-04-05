@@ -8,7 +8,7 @@ class CrispController extends Controller
 {
     public function call($endpoint, $method = 'GET', $body = [])
     {
-        $url = sprintf("%s/%s",
+        $url = sprintf('%s/%s',
             env('CRISP_BASE_URL'),
             $endpoint);
 
@@ -18,7 +18,7 @@ class CrispController extends Controller
         $headers = [
             'Content-Type' => 'application/json',
             'X-Crisp-Tier' => 'plugin',
-            'Authorization' => 'Basic ' . base64_encode($username . ':' . $token),
+            'Authorization' => 'Basic '.base64_encode($username.':'.$token),
         ];
 
         $response = null;

@@ -10,6 +10,7 @@ use NotificationChannels\Telegram\TelegramChannel;
 class WebhookController extends Controller
 {
     public $air_table_controller;
+
     public $crisp_controller;
 
     public function __construct()
@@ -43,50 +44,50 @@ class WebhookController extends Controller
                 'First name' => $firstName,
                 'Last name' => $lastName,
                 'Status' => 'NEW',
-            ]
+            ],
         ];
 
         // Conditionally add fields based on whether their values are defined and not equal to "undefined" or an empty string
-        if (!empty($data['email']) && $data['email'] !== "undefined") {
+        if (! empty($data['email']) && $data['email'] !== 'undefined') {
             $body['fields']['Email'] = trim($data['email']);
         }
-        if (!empty($data['phone']) && $data['phone'] !== "undefined") {
+        if (! empty($data['phone']) && $data['phone'] !== 'undefined') {
             $body['fields']['Phone'] = $data['phone'];
         }
-        if (isset($data['GCLID']) && $data['GCLID'] !== "undefined") {
+        if (isset($data['GCLID']) && $data['GCLID'] !== 'undefined') {
             $body['fields']['GCLID'] = $data['GCLID'];
         }
-        if (isset($data['crisp_profile']) && $data['crisp_profile'] !== "undefined") {
+        if (isset($data['crisp_profile']) && $data['crisp_profile'] !== 'undefined') {
             // Extract the URL from the "crisp_profile" field using regex
             preg_match('/\[Open Profile\]\((.*?)\)/', $data['crisp_profile'], $matches);
 
             // Check if the regex found a match
-            if (!empty($matches[1])) {
+            if (! empty($matches[1])) {
                 // Extracted URL found, assign it to the 'crisp_profile' field
                 $body['fields']['crisp_profile'] = $matches[1];
             }
         }
-        if (isset($data['whatsapp_business_number']) && $data['whatsapp_business_number'] !== "undefined") {
+        if (isset($data['whatsapp_business_number']) && $data['whatsapp_business_number'] !== 'undefined') {
             $body['fields']['whatsapp'] = $data['whatsapp_business_number'];
         }
-        if (!empty($courseInterests) && $courseInterests !== "undefined") {
+        if (! empty($courseInterests) && $courseInterests !== 'undefined') {
             $body['fields']['Course interest'] = [$courseInterests];
         }
-        if (isset($data['utm_source']) && $data['utm_source'] !== "undefined") {
+        if (isset($data['utm_source']) && $data['utm_source'] !== 'undefined') {
             $body['fields']['utm_source'] = $data['utm_source'];
         }
 
-        $url = ""; //sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
+        $url = ''; //sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
 
         $response = $this->air_table_controller->call($url, 'POST', $body);
 
         // Check if response status is 200 and it contains the "id" field
         if (isset($response['id'])) {
 
-            $data_array['msg'] = sprintf("Webhook successfuly sent for user: %s", $response['fields']['Email']);
+            $data_array['msg'] = sprintf('Webhook successfuly sent for user: %s', $response['fields']['Email']);
             Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
 
-            return "Record successfully created in AirTable";
+            return 'Record successfully created in AirTable';
         } else {
             return $response; // Return appropriate message if creation failed
         }
@@ -95,11 +96,11 @@ class WebhookController extends Controller
 
     public function getMessages($session_id, $body)
     {
-        try{
-            $crisp_url = sprintf("conversation/%s/messages", $session_id);
+        try {
+            $crisp_url = sprintf('conversation/%s/messages', $session_id);
             $responseData = $this->crisp_controller->call($crisp_url);
 
-            if (!isset($responseData['data']) || empty($responseData['data'])) {
+            if (! isset($responseData['data']) || empty($responseData['data'])) {
                 return response()->json(['error' => true, 'message' => 'No messages found in the response.']);
             }
 
@@ -113,12 +114,11 @@ class WebhookController extends Controller
             }
 
             $body['fields']['crisp_conversations'] = $conversation;
-            return $body;
-        }
-        catch(\Exception $e){
-            return $body;
-        }
 
+            return $body;
+        } catch (\Exception $e) {
+            return $body;
+        }
 
     }
 }
