@@ -37,7 +37,6 @@ class UpdateDataOnCrisp extends Command
                     $data = $air_table_controller->call($url);
                 }
 
-
                 $data = $data['fields'];
 
                 if (! isset($data['Email'])) {
@@ -48,7 +47,7 @@ class UpdateDataOnCrisp extends Command
 
                 $this->createNewContact($crisp_controller, $data, $email);
                 $this->updateContactInfo($crisp_controller, $data, $email);
-                $this->updateProfileInfo($crisp_controller, $data, $email, $webhook->base);
+                $this->updateProfileInfo($crisp_controller, $data, $email, $webhook->base, $air_table_controller);
 
                 AirTable::where('record', $webhook->record)->delete();
 
@@ -118,7 +117,7 @@ class UpdateDataOnCrisp extends Command
         dump($response);
     }
 
-    public function updateProfileInfo($crisp_controller, $data, $email, $branch)
+    public function updateProfileInfo($crisp_controller, $data, $email, $branch, $air_table_controller)
     {
         if (isset($data['whatsapp'])) {
             $body['data']['whatsapp_business_number'] = $data['whatsapp'];
@@ -148,9 +147,35 @@ class UpdateDataOnCrisp extends Command
 
         $body['data']['status'] = isset($data['Status']) ? $data['Status'] : '';
 
+        $body['data']['Discount_offered'] = $this->get_discount($air_table_controller, $data);
+
         $url = sprintf('people/data/%s', $email);
         $response = $crisp_controller->call($url, 'PATCH', $body);
 
         dump($response);
     }
+
+    public function get_discount($air_table_controller, $data)
+    {
+        $discount = '';
+
+        if (isset($data['Discount offered']) && is_array($data['Discount offered'])) {
+
+                $discount_id = $data['Discount offered'][0];
+
+                $url = sprintf('%s', $discount_id);
+                $response = $air_table_controller->call($url);
+
+                // Extract name and discount amount
+                $name = $response['fields']['Discount Name'];
+                $discount_amount = $response['fields']['Discount Amount'] * 100; // Convert to percentage
+
+                // Prepare discount string
+                $discount = "$name $discount_amount%";
+
+        }
+
+        return $discount;
+    }
+
 }
