@@ -50,13 +50,13 @@ class UpdateDataOnCrisp extends Command
                 $this->updateContactInfo($crisp_controller, $data, $email);
                 $this->updateProfileInfo($crisp_controller, $data, $email, $webhook->base);
 
-                //AirTable::where('record', $webhook->record)->delete();
+                AirTable::where('record', $webhook->record)->delete();
 
                 $data_array['msg'] = sprintf('Data updated on CRISP %s', $email);
-                //Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+                Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
             } catch (Exception $e) {
-                //AirTable::where('record', $webhook->record)->delete();
-                dd($e->getMessage());
+                AirTable::where('record', $webhook->record)->delete();
+                dump($e->getMessage());
             }
         }
 
