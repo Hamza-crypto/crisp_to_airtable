@@ -60,7 +60,7 @@ class AirTableController extends Controller
 
         $data = $response->json();
 
-        $sourceValues = $this->store_data($data);
+        $sourceValues = $this->store_data($data, 'sales');
 
         Cursor::where('id', 1)->update(['count' => $data['cursor']]);
 
@@ -87,7 +87,7 @@ class AirTableController extends Controller
 
         $sourceValues = [];
 
-        $sourceValues = $this->store_data($data);
+        $sourceValues = $this->store_data($data, 'rak');
 
         Cursor::where('id', 2)->update(['count' => $data['cursor']]);
 
@@ -102,7 +102,7 @@ class AirTableController extends Controller
 
     }
 
-    public function store_data($data)
+    public function store_data($data, $base)
     {
         $allowedFields = [
             'fldyZIIKL2rGWc6J1', //first name
@@ -182,6 +182,7 @@ class AirTableController extends Controller
                             } else {
                                 // Create a new record
                                 $airTable = new AirTable();
+                                $airTable->base = $base;
                                 $airTable->table = $tableId;
                                 $airTable->record = $recordId;
                                 $airTable->field = $fieldId;

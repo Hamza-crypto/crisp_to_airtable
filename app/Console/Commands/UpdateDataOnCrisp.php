@@ -30,7 +30,13 @@ class UpdateDataOnCrisp extends Command
         foreach ($webhooks as $webhook) {
             try {
                 $url = sprintf('%s', $webhook->record);
-                $data = $air_table_controller->call($url);
+                if($webhook->base == 'rak'){
+                    $data = $air_table_controller->call_rak($url);
+                }
+                else{
+                    $data = $air_table_controller->call($url);
+                }
+
 
                 $data = $data['fields'];
 
