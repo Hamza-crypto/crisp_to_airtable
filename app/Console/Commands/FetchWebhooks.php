@@ -15,5 +15,7 @@ class FetchWebhooks extends Command
     {
         $air_table_controller = new AirTableController;
         $air_table_controller->store();
+
+        $air_table_controller->store_rak(); //For RAK
     }
 }

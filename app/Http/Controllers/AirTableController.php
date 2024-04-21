@@ -31,6 +31,26 @@ class AirTableController extends Controller
         return $response->json();
     }
 
+    public function call_rak($endpoint, $method = 'GET', $body = [])
+    {
+        $url = sprintf('%s/%s/%s/%s',
+            env('AIRTABLE_BASE_URL'),
+            env('RAK_BASE_ID'),
+            env('RAK_TABLE_NAME'),
+            $endpoint);
+
+        $response = Http::withToken(env('RAK_AIRTABLE_TOKEN'));
+
+        if ($method === 'GET') {
+            $response = $response->get($url);
+        } elseif ($method === 'POST') {
+            $response = $response->post($url, $body);
+        }
+
+        return $response->json();
+    }
+
+
     public function store()
     {
         $cursor = Cursor::where('id', 1)->first();
@@ -40,6 +60,50 @@ class AirTableController extends Controller
 
         $data = $response->json();
 
+        $sourceValues = $this->store_data($data);
+
+        Cursor::where('id', 1)->update(['count' => $data['cursor']]);
+
+        if($sourceValues){
+            $uniqueSourceValues = array_unique($sourceValues);
+            $sourceString = implode(', ', $uniqueSourceValues);
+            $data_array['msg'] = sprintf("Webhook cursor: %s \n %s", $cursor->count, $sourceString);
+            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+        }
+
+        return response()->json(['message' => 'Data stored/updated successfully'], 200);
+
+    }
+
+
+    public function store_rak()
+    {
+        $cursor = Cursor::where('id', 2)->first(); //2 = RAK CRM
+        $url = sprintf('%s/bases/%s/webhooks/%s/payloads?cursor=%s', env('AIRTABLE_BASE_URL'), env('RAK_BASE_ID'), env('RAK_WEBHOOK_ID'), $cursor->count);
+        //$url = "http://localhost:8787/";
+        $response = Http::withToken(env('RAK_AIRTABLE_TOKEN'))->get($url);
+
+        $data = $response->json();
+
+        $sourceValues = [];
+
+        $sourceValues = $this->store_data($data);
+
+        Cursor::where('id', 2)->update(['count' => $data['cursor']]);
+
+        if($sourceValues){
+            $uniqueSourceValues = array_unique($sourceValues);
+            $sourceString = implode(', ', $uniqueSourceValues);
+            $data_array['msg'] = sprintf("Webhook cursor RAK: %s \n %s", $cursor->count, $sourceString);
+            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+        }
+
+        return response()->json(['message' => 'Data stored/updated successfully'], 200);
+
+    }
+
+    public function store_data($data)
+    {
         $allowedFields = [
             'fldyZIIKL2rGWc6J1', //first name
             'fldyZq9vgdzdSApC3', //last name
@@ -133,16 +197,8 @@ class AirTableController extends Controller
             }
 
         }
-        Cursor::where('id', 1)->update(['count' => $data['cursor']]);
 
-        if($sourceValues){
-            $uniqueSourceValues = array_unique($sourceValues);
-            $sourceString = implode(', ', $uniqueSourceValues);
-            $data_array['msg'] = sprintf("Webhook cursor: %s \n %s", $cursor->count, $sourceString);
-            Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
-        }
-
-        return response()->json(['message' => 'Data stored/updated successfully'], 200);
-
+        return $sourceValues;
     }
+
 }

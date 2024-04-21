@@ -70,6 +70,7 @@ class WebhookController extends Controller
         if (isset($data['whatsapp_business_number']) && $data['whatsapp_business_number'] !== 'undefined') {
             $body['fields']['whatsapp'] = $data['whatsapp_business_number'];
         }
+
         if (! empty($courseInterests) && $courseInterests !== 'undefined') {
             $body['fields']['Course interest'] = [$courseInterests];
         }
@@ -86,6 +87,64 @@ class WebhookController extends Controller
 
             $data_array['msg'] = sprintf('Webhook successfuly sent for user: %s', $response['fields']['Email']);
             Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
+
+            return 'Record successfully created in AirTable';
+        } else {
+            return $response; // Return appropriate message if creation failed
+        }
+
+    }
+
+    public function webhook_rak(Request $request)
+    {
+        $data = $request->all();
+
+        // Check if both email and phone are missing
+        if (empty($data['email']) && empty($data['phone'])) {
+            return 0; // Return 0 and exit further execution
+        }
+
+        // Splitting the name into first and last name
+        $fullName = explode(' ', $data['nickname']);
+        $firstName = $fullName[0];
+        $lastName = isset($fullName[1]) ? $fullName[1] : '';
+
+        // Extracting course interests
+        $courseInterests = $data['course_interest'] ?? ''; // Set to empty string if course interest is undefined or null
+        if (is_array($courseInterests)) {
+            $courseInterests = implode(', ', $courseInterests);
+        }
+
+        $body = [
+            'fields' => [
+                'First name' => $firstName,
+                'Last name' => $lastName,
+                'Status' => 'NEW',
+                'Crisp' => 'Yes'
+            ],
+        ];
+
+        // Conditionally add fields based on whether their values are defined and not equal to "undefined" or an empty string
+        if (! empty($data['email']) && $data['email'] !== 'undefined') {
+            $body['fields']['Email'] = trim($data['email']);
+        }
+        if (! empty($data['phone']) && $data['phone'] !== 'undefined') {
+            $body['fields']['Phone'] = $data['phone'];
+        }
+
+        if (! empty($courseInterests) && $courseInterests !== 'undefined') {
+            $body['fields']['Course interest'] = [$courseInterests];
+        }
+
+        $url = ''; //sprintf("%s/%s", env('BASE_ID'), env('TABLE_NAME'));
+
+        $response = $this->air_table_controller->call_rak($url, 'POST', $body);
+
+        // Check if response status is 200 and it contains the "id" field
+        if (isset($response['id'])) {
+
+            $data_array['msg'] = sprintf('Webhook successfuly sent for user: %s', $response['fields']['Email']);
+            //Notification::route(TelegramChannel::class, '')->notify(new AirTableNotification($data_array));
 
             return 'Record successfully created in AirTable';
         } else {
