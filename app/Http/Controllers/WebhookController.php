@@ -120,7 +120,7 @@ class WebhookController extends Controller
                 'First name' => $firstName,
                 'Last name' => $lastName,
                 'Status' => 'NEW',
-                'Crisp' => 'Yes'
+                'Crisp' => true
             ],
         ];
 
