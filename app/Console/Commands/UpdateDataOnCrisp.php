@@ -48,7 +48,7 @@ class UpdateDataOnCrisp extends Command
 
                 $this->createNewContact($crisp_controller, $data, $email);
                 $this->updateContactInfo($crisp_controller, $data, $email);
-                $this->updateProfileInfo($crisp_controller, $data, $email);
+                $this->updateProfileInfo($crisp_controller, $data, $email, $webhook->base);
 
                 AirTable::where('record', $webhook->record)->delete();
 
@@ -118,7 +118,7 @@ class UpdateDataOnCrisp extends Command
         dump($response);
     }
 
-    public function updateProfileInfo($crisp_controller, $data, $email)
+    public function updateProfileInfo($crisp_controller, $data, $email, $branch)
     {
         if (isset($data['whatsapp'])) {
             $body['data']['whatsapp_business_number'] = $data['whatsapp'];
@@ -138,7 +138,7 @@ class UpdateDataOnCrisp extends Command
         $body['data']['registered'] = isset($data['Registered']) ? $data['Registered'] : '';
         $body['data']['preferred_timing'] = isset($data['Preferred timing']) ? $data['Preferred timing'] : '';
         $body['data']['total_spend'] = isset($data['Amount Rollup (from Deal)']) ? $data['Amount Rollup (from Deal)'] : '';
-        $body['data']['branch'] = 'Dubai'; // isset($data['Branch']) ? $data['Branch'] : '';
+        $body['data']['branch'] = $branch == 'sales' ? 'Dubai' : 'Ras Al Khaimah'; // isset($data['Branch']) ? $data['Branch'] : '';
 
         $body['data']['utm_campaign'] = isset($data['utm_campaign']) ? $data['utm_campaign'] : '';
         $body['data']['utm_source'] = isset($data['utm_source']) ? $data['utm_source'] : '';
