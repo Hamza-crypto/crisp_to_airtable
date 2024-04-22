@@ -173,7 +173,7 @@ class UpdateDataOnCrisp extends Command
                 if (isset($decoded_response['fields']['Discount Amount'])) {
                     $discount_amount = $decoded_response['fields']['Discount Amount'] * 100; // Convert to percentage
                     // Prepare discount string with amount
-                    $discount = "$name $discount_amount%";
+                    $discount = "$name";
                 } else {
                     // Prepare discount string without amount
                     $discount = $name;
