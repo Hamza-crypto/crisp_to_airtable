@@ -168,10 +168,16 @@ class UpdateDataOnCrisp extends Command
 
                 // Extract name and discount amount
                 $name = $response['fields']['Discount Name'];
-                $discount_amount = $response['fields']['Discount Amount'] * 100; // Convert to percentage
 
-                // Prepare discount string
-                $discount = "$name $discount_amount%";
+                // Check if 'Discount Amount' exists in the response
+                if (isset($decoded_response['fields']['Discount Amount'])) {
+                    $discount_amount = $decoded_response['fields']['Discount Amount'] * 100; // Convert to percentage
+                    // Prepare discount string with amount
+                    $discount = "$name $discount_amount%";
+                } else {
+                    // Prepare discount string without amount
+                    $discount = $name;
+                }
 
         }
 
