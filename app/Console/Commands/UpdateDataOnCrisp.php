@@ -40,6 +40,7 @@ class UpdateDataOnCrisp extends Command
                 $data = $data['fields'];
 
                 if (! isset($data['Email'])) {
+                    AirTable::where('record', $webhook->record)->delete();
                     return 0;
                 }
 
