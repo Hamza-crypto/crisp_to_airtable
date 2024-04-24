@@ -24,6 +24,12 @@ class FetchWebhooks extends Command
             $air_table_controller->store();
         }
 
-        $air_table_controller->store_rak(); //For RAK
+
+        // Check if API calls should be paused
+        if (Cache::get('rak_api_pause_flag')) {
+            dump('API calls are paused. Skipping fetch.');
+        } else {
+            $air_table_controller->store_rak(); //For RAK
+        }
     }
 }

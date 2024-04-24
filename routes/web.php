@@ -29,6 +29,12 @@ Route::get('updates', function () {
 });
 
 
+Route::get('webhooks', function () {
+    Artisan::call('airtable:fetch-webhooks');
+});
+
+
+
 Route::get('/', function () {
     return view('welcome');
 });

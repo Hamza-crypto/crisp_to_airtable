@@ -65,11 +65,11 @@ class AirTableController extends Controller
 
         $data = $response->json();
 
-
         // Check if mightHaveMore is false
         if (!$data['mightHaveMore']) {
             // Pause API calls for next 5 minutes
-            Cache::put('sale_api_pause_flag', true, 5);
+            Cache::put('sale_api_pause_flag', true, 300);
+            dump('Making cache for sale');
         }
 
 
@@ -97,6 +97,13 @@ class AirTableController extends Controller
         $response = Http::withToken(env('RAK_AIRTABLE_TOKEN'))->get($url);
 
         $data = $response->json();
+
+        // Check if mightHaveMore is false
+        if (!$data['mightHaveMore']) {
+            // Pause API calls for next 5 minutes
+            Cache::put('rak_api_pause_flag', true, 300);
+            dump('Making cache for rak');
+        }
 
         $sourceValues = [];
 
