@@ -6,6 +6,7 @@ use App\Models\AirTable;
 use App\Models\Cursor;
 use App\Notifications\AirTableNotification;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
@@ -14,11 +15,13 @@ class AirTableController extends Controller
 {
     public function call($endpoint, $method = 'GET', $body = [])
     {
-        $url = sprintf('%s/%s/%s/%s',
+        $url = sprintf(
+            '%s/%s/%s/%s',
             env('AIRTABLE_BASE_URL'),
             env('BASE_ID'),
             env('TABLE_NAME'),
-            $endpoint);
+            $endpoint
+        );
 
         $response = Http::withToken(env('AIRTABLE_TOKEN'));
 
@@ -33,11 +36,13 @@ class AirTableController extends Controller
 
     public function call_rak($endpoint, $method = 'GET', $body = [])
     {
-        $url = sprintf('%s/%s/%s/%s',
+        $url = sprintf(
+            '%s/%s/%s/%s',
             env('AIRTABLE_BASE_URL'),
             env('RAK_BASE_ID'),
             env('RAK_TABLE_NAME'),
-            $endpoint);
+            $endpoint
+        );
 
         $response = Http::withToken(env('RAK_AIRTABLE_TOKEN'));
 
@@ -60,11 +65,19 @@ class AirTableController extends Controller
 
         $data = $response->json();
 
+
+        // Check if mightHaveMore is false
+        if (!$data['mightHaveMore']) {
+            // Pause API calls for next 5 minutes
+            Cache::put('sale_api_pause_flag', true, 5);
+        }
+
+
         $sourceValues = $this->store_data($data, 'sales');
 
         Cursor::where('id', 1)->update(['count' => $data['cursor']]);
 
-        if($sourceValues){
+        if($sourceValues) {
             $uniqueSourceValues = array_unique($sourceValues);
             $sourceString = implode(', ', $uniqueSourceValues);
             $data_array['msg'] = sprintf("Webhook cursor: %s \n %s", $cursor->count, $sourceString);
@@ -91,7 +104,7 @@ class AirTableController extends Controller
 
         Cursor::where('id', 2)->update(['count' => $data['cursor']]);
 
-        if($sourceValues){
+        if($sourceValues) {
             $uniqueSourceValues = array_unique($sourceValues);
             $sourceString = implode(', ', $uniqueSourceValues);
             $data_array['msg'] = sprintf("Webhook cursor RAK: %s \n %s", $cursor->count, $sourceString);
