@@ -1,12 +1,8 @@
 <?php
 
 use App\Http\Controllers\WebhookController;
-use App\Models\AirTable;
-use App\Notifications\AirTableNotification;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
-use NotificationChannels\Telegram\TelegramChannel;
 
 /*
 |--------------------------------------------------------------------------

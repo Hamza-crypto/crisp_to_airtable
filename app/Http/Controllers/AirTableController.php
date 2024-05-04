@@ -68,7 +68,7 @@ class AirTableController extends Controller
         // Check if mightHaveMore is false
         if (!$data['mightHaveMore']) {
             // Pause API calls for next 5 minutes
-            Cache::put('sale_api_pause_flag', true, 300);
+            Cache::put('sale_api_pause_flag', true, 180);
             dump('Making cache for sale');
         }
 
@@ -101,7 +101,7 @@ class AirTableController extends Controller
         // Check if mightHaveMore is false
         if (!$data['mightHaveMore']) {
             // Pause API calls for next 5 minutes
-            Cache::put('rak_api_pause_flag', true, 300);
+            Cache::put('rak_api_pause_flag', true, 180);
             dump('Making cache for rak');
         }
 
