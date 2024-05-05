@@ -54,6 +54,11 @@ Route::get('migrate', function () {
 });
 
 
+Route::get('salary/notification', function () {
+    Artisan::call('avg:salary');
+});
+
+
 Route::get('optimize', function () {
     Artisan::call('optimize:clear');
     dump('Optimization Done');
