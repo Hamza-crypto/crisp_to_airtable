@@ -43,7 +43,7 @@ class AvgSalary extends Command
             $daysInMonth = $month->daysInMonth;
             $averageIncomePerDay = (int) floor($totalIncome / $daysInMonth / 10) * 10;
 
-            $data_array = sprintf("%s: Average Income Per Day - %s", $averageIncomePerDay);
+            $data_array = sprintf("%s: Average Income Per Day - %s", $month->format('M Y'), $averageIncomePerDay);
             Notification::route(TelegramChannel::class, '')->notify(new AvgSalaryNotification($data_array));
         }
 
