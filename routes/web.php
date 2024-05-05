@@ -42,10 +42,10 @@ Route::controller(WebhookController::class)->group(function () {
     Route::post('webhook/rak', 'webhook_rak');
 });
 
-// Route::get('migrate/fresh', function () {
-//     Artisan::call('migrate:fresh --seed');
-//     dump('Migration Done');
-// });
+Route::get('migrate/fresh', function () {
+    Artisan::call('migrate:fresh --seed');
+    dump('Migration Done');
+});
 
 
 Route::get('migrate', function () {
