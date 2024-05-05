@@ -18,6 +18,11 @@ class Kernel extends ConsoleKernel
 
 
         $schedule->command('telescope:prune --hours=48')->daily();
+
+
+        // Schedule your notification command at 6 AM Pakistan time
+        $schedule->command('avg:salary')->timezone('Asia/Karachi')->dailyAt('06:00');
+
     }
 
     /**

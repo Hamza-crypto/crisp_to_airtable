@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -41,12 +42,27 @@ Route::controller(WebhookController::class)->group(function () {
     Route::post('webhook/rak', 'webhook_rak');
 });
 
+// Route::get('migrate/fresh', function () {
+//     Artisan::call('migrate:fresh --seed');
+//     dump('Migration Done');
+// });
+
+
 Route::get('migrate', function () {
-    Artisan::call('migrate:fresh --seed');
+    Artisan::call('migrate');
     dump('Migration Done');
 });
+
 
 Route::get('optimize', function () {
     Artisan::call('optimize:clear');
     dump('Optimization Done');
+});
+
+
+Route::controller(SalaryController::class)->group(function () {
+    Route::get('salary', 'index');
+    Route::post('salary', 'store')->name('salary.store');
+    Route::delete('/delete-salary/{id}', [SalaryController::class, 'deleteSalary'])->name('delete.salary');
+
 });
