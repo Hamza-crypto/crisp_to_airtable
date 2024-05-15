@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Notifications\AirTableNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
 
@@ -183,6 +184,6 @@ class WebhookController extends Controller
 
     public function estimates(Request $request)
     {
-        return response()->json(['success' => true]);
+        Http::post(env('ESTIMATES_WEB_URL'), $request->all());
     }
 }
