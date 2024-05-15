@@ -40,6 +40,7 @@ Route::controller(WebhookController::class)->group(function () {
     Route::get('webhook', 'webhook');
     Route::post('webhook', 'webhook');
     Route::post('webhook/rak', 'webhook_rak');
+    Route::post('webhook/estimates', 'estimates');
 });
 
 // Route::get('migrate/fresh', function () {

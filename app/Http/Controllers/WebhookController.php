@@ -180,4 +180,9 @@ class WebhookController extends Controller
         }
 
     }
+
+    public function estimates(Request $request)
+    {
+        return response()->json(['success' => true]);
+    }
 }
