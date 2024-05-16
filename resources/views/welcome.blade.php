@@ -842,7 +842,7 @@
     </script>
 
     <script>
-        window.location.href = "/telescope";
+        window.location.href = "/mylogs";
     </script>
 </head>
 

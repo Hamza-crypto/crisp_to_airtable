@@ -8,7 +8,7 @@ class AccessWithPasscode
 {
     public function handle($request, Closure $next)
     {
-        if ($request->is('telescope*') && $request->isMethod('GET')) {
+        if ($request->is('mylogs*') && $request->isMethod('GET')) {
 
             if (! $request->user()) {
 
