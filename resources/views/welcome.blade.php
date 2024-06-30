@@ -841,9 +841,6 @@
         })();
     </script>
 
-    <script>
-        window.location.href = "/mylogs";
-    </script>
 </head>
 
 <body class="antialiased">
