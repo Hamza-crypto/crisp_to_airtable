@@ -70,5 +70,21 @@ Route::controller(SalaryController::class)->group(function () {
     Route::get('salary', 'index');
     Route::post('salary', 'store')->name('salary.store');
     Route::delete('/delete-salary/{id}', [SalaryController::class, 'deleteSalary'])->name('delete.salary');
-
 });
+
+/**
+ * Fetch webhook details from AirTable continuously
+ * Pick each entry from DB and perform further checks
+ *
+ * Check if that record exists on CRISP (1)
+ * If exists: Then
+    *  Update Contact Info (2)
+    *  Update Profile Details (e.g. branch, total spent, course_inetrest) (3)
+ * If Not exists: Then
+    *  Create Contact First (2)
+    *  Update Contact Info (3)
+    *  Update Profile Details (e.g. branch, total spent, course_inetrest) (4)
+ */
+
+
+Pick Single Record

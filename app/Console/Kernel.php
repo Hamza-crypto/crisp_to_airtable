@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('crisp:update')->everyMinute();
 
 
-        $schedule->command('telescope:prune --hours=48')->daily();
+        $schedule->command('telescope:prune --hours=140')->daily();
 
 
         // Schedule your notification command at 6 AM Pakistan time
