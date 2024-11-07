@@ -85,6 +85,3 @@ Route::controller(SalaryController::class)->group(function () {
     *  Update Contact Info (3)
     *  Update Profile Details (e.g. branch, total spent, course_inetrest) (4)
  */
-
-
-Pick Single Record
